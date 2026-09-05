@@ -1,27 +1,40 @@
 {
   "name": "@app/mobile",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "private": true,
   "dependencies": {
     "@app/contracts": "workspace:*",
+    "@tanstack/react-query": "^5.102.8",
     "expo": "~57.0.19",
+    "expo-constants": "^57.0.17",
+    "expo-dev-client": "^57.0.18",
+    "expo-linking": "^57.0.9",
+    "expo-router": "^57.0.19",
     "expo-status-bar": "~57.0.1",
+    "expo-system-ui": "~57.0.3",
     "react": "19.2.3",
-    "react-native": "0.86.3"
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "^5.9.1",
+    "react-native-screens": "^4.27.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "eslint": "^10.9.1",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-boundaries": "^6.0.2",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.69.0"
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "prebuild:dev": "APP_VARIANT=development expo prebuild --clean",
+    "prebuild:staging": "APP_VARIANT=staging expo prebuild --clean",
+    "prebuild:prod": "APP_VARIANT=production expo prebuild --clean",
     "typecheck": "tsc --noEmit",
-    "build": "echo skip",
-    "lint": "echo skip",
-    "test": "echo skip"
+    "lint": "eslint src"
   }
 }

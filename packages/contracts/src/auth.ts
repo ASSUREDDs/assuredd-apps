@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const LoginRequestSchema = z.object({
     email: z.email(),
-    password: z.string().min(8, 'Минимум 8 символов'),
+    password: z.string().min(8, 'Min 8 symbols'),
 });
 
 export const LoginResponseSchema = z.object({

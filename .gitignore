@@ -4,3 +4,6 @@ dist/
 .env
 .expo/
 .idea
+
+apps/mobile/ios/
+apps/mobile/android/
