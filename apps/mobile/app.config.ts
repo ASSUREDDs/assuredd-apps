@@ -40,10 +40,11 @@ const config: ExpoConfig = {
     },
     plugins: [['expo-router', { root: './src/app' }]],
     experiments: { typedRoutes: true },
+    owner: 'assuredds-team',
     extra: {
         apiUrl: current.apiUrl,
         variant,
-        eas: { projectId: 'подставится после eas init' },
+        eas: { projectId: '8e9dbfc1-2f22-4e21-9f36-027a94347fb6' },
     },
 };
 
