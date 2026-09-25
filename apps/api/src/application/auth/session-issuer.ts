@@ -10,7 +10,7 @@ import { TOKEN_SERVICE, type TokenService } from './ports/token.port';
 @Injectable()
 export class SessionIssuer {
     constructor(
-        @Inject(REFRESH_TOKEN_REPOSITORY) private readonly refreshTokens: RefreshTokenRepository,
+        @Inject(REFRESH_TOKEN_REPOSITORY) private readonly refreshTokensRepository: RefreshTokenRepository,
         @Inject(TOKEN_SERVICE) private readonly tokens: TokenService,
         @Inject(CLOCK) private readonly clock: Clock,
     ) {}
@@ -19,7 +19,7 @@ export class SessionIssuer {
         const accessToken = this.tokens.signAccessToken({ sub: user.id, email: user.email });
         const issued = this.tokens.issueRefreshToken();
 
-        await this.refreshTokens.save({
+        await this.refreshTokensRepository.save({
             id: issued.tokenId,
             userId: user.id,
             tokenHash: issued.tokenHash,
