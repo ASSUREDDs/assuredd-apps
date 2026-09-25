@@ -1,7 +1,8 @@
+import { sql } from 'drizzle-orm';
 import { Controller, Get, Inject } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, HealthIndicatorService } from '@nestjs/terminus';
-import { sql } from 'drizzle-orm';
-import { DB, type Database } from '@infrastructure/db';
+
+import { type Database,DB } from '@infrastructure/db';
 
 @Controller('health')
 export class HealthController {
