@@ -1,5 +1,5 @@
 import type { LoginResponse, RefreshResponse, RegisterResponse } from '@app/contracts';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 
 import { LoginUseCase } from '@application/auth/login.usecase';
 import { LogoutUseCase } from '@application/auth/logout.usecase';
@@ -12,6 +12,7 @@ import { LoginDto } from './dto/login.dto';
 import { LogoutDto } from './dto/logout.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +49,7 @@ export class AuthController {
     }
 
     @Post('logout')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async logout(@Body() dto: LogoutDto): Promise<void> {
         await this.logoutUseCase.execute(dto.refreshToken);

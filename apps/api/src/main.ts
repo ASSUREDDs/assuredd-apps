@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import type { Env } from '@infrastructure/config';
+import { GlobalExceptionFilter } from '@presentation/shared/global-exception.filter';
 
 import { AppModule } from './app.module';
 
@@ -13,6 +14,7 @@ async function bootstrap(): Promise<void> {
 
     app.enableShutdownHooks();
     app.useGlobalPipes(new ZodValidationPipe());
+    app.useGlobalFilters(new GlobalExceptionFilter());
 
     const cfg = app.get<ConfigService<Env, true>>(ConfigService);
     await app.listen(cfg.get('PORT', { infer: true }), '0.0.0.0');
