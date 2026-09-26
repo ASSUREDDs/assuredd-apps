@@ -1,13 +1,16 @@
-import type { LoginResponse, RefreshResponse, RegisterResponse } from '@app/contracts';
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import type { LoginResponse, RefreshResponse, RegisterResponse, User } from '@app/contracts';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 
+import { GetCurrentUserUseCase } from '@application/auth/get-current-user.usecase';
 import { LoginUseCase } from '@application/auth/login.usecase';
 import { LogoutUseCase } from '@application/auth/logout.usecase';
+import type { AccessTokenPayload } from '@application/auth/ports/token.port';
 import { RefreshUseCase } from '@application/auth/refresh.usecase';
 import { RegisterUseCase } from '@application/auth/register.usecase';
 
 import { DomainErrorHttpMapper } from '../shared/domain-error-http.mapper';
-import { toAuthResponse } from './auth-response.mapper';
+import { toAuthResponse, toUserResponse } from './auth-response.mapper';
+import { CurrentUser } from './current-user.decorator';
 import { LoginDto } from './dto/login.dto';
 import { LogoutDto } from './dto/logout.dto';
 import { RefreshDto } from './dto/refresh.dto';
@@ -21,6 +24,7 @@ export class AuthController {
         private readonly loginUseCase: LoginUseCase,
         private readonly refreshUseCase: RefreshUseCase,
         private readonly logoutUseCase: LogoutUseCase,
+        private readonly getCurrentUserUseCase: GetCurrentUserUseCase,
         private readonly errors: DomainErrorHttpMapper,
     ) {}
 
@@ -53,5 +57,14 @@ export class AuthController {
     @HttpCode(HttpStatus.NO_CONTENT)
     async logout(@Body() dto: LogoutDto): Promise<void> {
         await this.logoutUseCase.execute(dto.refreshToken);
+    }
+
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    async me(@CurrentUser() currentUser: AccessTokenPayload): Promise<User> {
+        const result = await this.getCurrentUserUseCase.execute(currentUser.sub);
+        if (!result.ok) throw this.errors.toHttpException(result.error);
+
+        return toUserResponse(result.value);
     }
 }

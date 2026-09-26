@@ -1,5 +1,4 @@
 import Constants from 'expo-constants';
-import { Platform } from 'react-native';
 
 type Extra = { apiUrl: string; variant: string };
 
@@ -10,10 +9,11 @@ if (!extra?.apiUrl) {
 }
 
 function resolveDevHost(url: string): string {
-    if (Platform.OS === 'android') {
-        return url.replace('localhost', '10.0.2.2');
-    }
-    return url;
+    const hostUri = Constants.expoConfig?.hostUri;
+    if (!hostUri) return url;
+
+    const host = hostUri.split(':')[0];
+    return url.replace('localhost', host);
 }
 
 export const API_URL = resolveDevHost(extra.apiUrl);
