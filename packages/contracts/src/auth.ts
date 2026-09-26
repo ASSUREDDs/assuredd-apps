@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 
-export const GenderSchema = z.enum(['male', 'female', 'other', 'prefer_not_to_say']);
+export const GenderSchema = z.enum(['male', 'female', 'other']);
 export type Gender = z.infer<typeof GenderSchema>;
 
 export const PhoneSchema = z

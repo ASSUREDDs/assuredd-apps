@@ -23,7 +23,9 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@db:5436/app
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/app
+      ACCESS_TOKEN_SECRET: e5482cabc11524e32e29a8436a18f4bc7da48399b778a58eb9f1e4236959b6b3
+      REFRESH_TOKEN_SECRET: 36824f3f7f4c9d548be522f4f0f057b413d04cbbe801929055207dde1ddbe8ed
     ports:
       - "3550:3000"
     depends_on:

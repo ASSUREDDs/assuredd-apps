@@ -2,7 +2,6 @@ export const Gender = {
     Male: 'male',
     Female: 'female',
     Other: 'other',
-    PreferNotToSay: 'prefer_not_to_say',
 } as const;
 
 export type Gender = (typeof Gender)[keyof typeof Gender];

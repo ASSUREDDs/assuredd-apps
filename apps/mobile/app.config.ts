@@ -8,7 +8,7 @@ const variants = {
     development: {
         name: 'Assuredd Dev',
         bundleId: 'com.assuredd.app.dev',
-        apiUrl: 'http://localhost:3000',
+        apiUrl: 'http://localhost:3550',
     },
     staging: {
         name: 'Assuredd Staging',
@@ -38,7 +38,17 @@ const config: ExpoConfig = {
     android: {
         package: current.bundleId,
     },
-    plugins: [['expo-router', { root: './src/app' }]],
+    plugins: [
+        ['expo-router', { root: './src/app' }],
+        'expo-secure-store',
+        [
+            'expo-location',
+            {
+                locationWhenInUsePermission:
+                    'Allow $(PRODUCT_NAME) to use your location to verify the address you enter during registration.',
+            },
+        ],
+    ],
     experiments: { typedRoutes: true },
     owner: 'assuredds-team',
     extra: {
