@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { REFRESH_TOKEN_REPOSITORY } from '@domain/auth/refresh-token.repository';
 import { USER_REPOSITORY } from '@domain/auth/user.repository';
+import { GetCurrentUserUseCase } from '@application/auth/get-current-user.usecase';
 import { LoginUseCase } from '@application/auth/login.usecase';
 import { LogoutUseCase } from '@application/auth/logout.usecase';
 import { PASSWORD_HASHER } from '@application/auth/ports/password-hasher.port';
@@ -29,6 +30,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
         LoginUseCase,
         RefreshUseCase,
         LogoutUseCase,
+        GetCurrentUserUseCase,
         SessionIssuer,
         DomainErrorHttpMapper,
         JwtAuthGuard,

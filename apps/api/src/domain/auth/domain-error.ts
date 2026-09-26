@@ -4,6 +4,7 @@ export const AuthErrorCode = {
     InvalidCredentials: 'INVALID_CREDENTIALS',
     EmailAlreadyInUse: 'EMAIL_ALREADY_IN_USE',
     InvalidRefreshToken: 'INVALID_REFRESH_TOKEN',
+    UserNotFound: 'USER_NOT_FOUND',
 } as const;
 
 export type AuthErrorCode = (typeof AuthErrorCode)[keyof typeof AuthErrorCode];
@@ -23,5 +24,11 @@ export class EmailAlreadyInUseError extends DomainError {
 export class InvalidRefreshTokenError extends DomainError {
     constructor() {
         super(AuthErrorCode.InvalidRefreshToken, 'Invalid refresh token');
+    }
+}
+
+export class UserNotFoundError extends DomainError {
+    constructor() {
+        super(AuthErrorCode.UserNotFound, 'User not found');
     }
 }

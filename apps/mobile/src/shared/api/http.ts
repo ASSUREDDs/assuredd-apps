@@ -1,26 +1,42 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { API_URL } from '../config/env';
 
 export class ApiError extends Error {
-    constructor(public readonly status: number, message: string) {
+    constructor(
+        public readonly status: number,
+        message: string,
+        public readonly code?: string,
+    ) {
         super(message);
     }
+}
+
+export const NoContentSchema = z.null();
+
+interface RequestOptions extends RequestInit {
+    accessToken?: string;
 }
 
 export async function request<T extends z.ZodType>(
     path: string,
     schema: T,
-    init?: RequestInit,
+    init?: RequestOptions,
 ): Promise<z.infer<T>> {
+    const { accessToken, headers, ...rest } = init ?? {};
+
     const res = await fetch(`${API_URL}${path}`, {
-        ...init,
-        headers: { 'Content-Type': 'application/json', ...init?.headers },
+        ...rest,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+            ...headers,
+        },
     });
 
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
-        throw new ApiError(res.status, body?.message ?? 'Request failed');
+        throw new ApiError(res.status, body?.message ?? 'Request failed', body?.code);
     }
 
     const parsed = schema.safeParse(body);
