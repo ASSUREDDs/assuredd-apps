@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import boundaries from 'eslint-plugin-boundaries';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default tseslint.config(
     { ignores: ['dist/**', 'drizzle/**', 'eslint.config.mjs', 'src/migrate.ts'] },
@@ -8,7 +9,7 @@ export default tseslint.config(
     ...tseslint.configs.recommended,
     {
         files: ['src/**/*.ts'],
-        plugins: { boundaries },
+        plugins: { boundaries, 'simple-import-sort': simpleImportSort },
         settings: {
             'import/resolver': {
                 typescript: { project: './tsconfig.json' },
@@ -81,6 +82,19 @@ export default tseslint.config(
                     ],
                 },
             ],
+
+            'simple-import-sort/imports': [
+                'error',
+                {
+                    groups: [
+                        ['^\\u0000'],
+                        ['^node:', '^[a-z]', '^@(?!domain|application|infrastructure|presentation)'],
+                        ['^@domain', '^@application', '^@infrastructure', '^@presentation'],
+                        ['^\\.'],
+                    ],
+                },
+            ],
+            'simple-import-sort/exports': 'error',
         },
     },
 );
