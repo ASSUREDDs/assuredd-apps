@@ -1,7 +1,6 @@
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 
-/** Asks for the foreground location permission once and reports whether it was granted. */
 export function useLocationPermission(): boolean {
     const [isGranted, setIsGranted] = useState(false);
 

@@ -17,7 +17,6 @@ interface RequestOptions extends RequestInit {
     accessToken?: string;
 }
 
-/** Without this a request to an unreachable API never settles and the caller hangs. */
 const REQUEST_TIMEOUT_MS = 15_000;
 
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {

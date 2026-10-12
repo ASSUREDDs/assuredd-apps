@@ -10,7 +10,6 @@ import { useAddressSuggestions, useCityCenter } from '../model/use-address-sugge
 
 interface StreetFieldProps {
     value: string;
-    /** Suggestions are ranked around this city, so filling it in first matters. */
     city: string;
     error?: string;
     onChangeText: (value: string) => void;

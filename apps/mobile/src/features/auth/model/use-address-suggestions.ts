@@ -12,7 +12,6 @@ const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 350;
 const SUGGESTION_STALE_MS = 5 * 60 * 1000;
 
-/** Resolves the city the user typed so street suggestions can be ranked around it. */
 export function useCityCenter(city: string) {
     const debouncedCity = useDebouncedValue(city.trim(), DEBOUNCE_MS);
 

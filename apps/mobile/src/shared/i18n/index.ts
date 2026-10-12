@@ -14,9 +14,6 @@ function isSupportedLanguage(languageCode: string | null): languageCode is Suppo
 
 function resolveDeviceLanguage(): SupportedLanguage {
     try {
-        // expo-localization's native module may not be linked yet (Expo Go, or a dev
-        // client built before this dependency was added) — requireNativeModule throws
-        // synchronously on import in that case, so it must stay behind a lazy require.
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const Localization = require('expo-localization') as typeof import('expo-localization');
         const match = Localization.getLocales().find((locale) => isSupportedLanguage(locale.languageCode));

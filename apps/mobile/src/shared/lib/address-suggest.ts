@@ -26,8 +26,6 @@ interface ForwardGeocodeOptions {
     query: string;
     types: 'street' | 'place';
     limit: number;
-    /** Biases ranking towards this point. Without it Mapbox favours obscure settlements
-     * over the obvious match — "Хрещат" does not return Kyiv at all. */
     proximity?: Coordinates;
     signal?: AbortSignal;
 }
@@ -65,15 +63,12 @@ async function forwardGeocode({ query, types, limit, proximity, signal }: Forwar
 export interface AddressSuggestion {
     id: string;
     street: string;
-    /** Empty when Mapbox returns a street without a populated place. */
     city: string;
-    /** City, postcode and country — the secondary line of the option. */
     description: string;
     latitude: number;
     longitude: number;
 }
 
-/** Street-level suggestions restricted to Ukraine, ranked around `proximity` when given. */
 export async function suggestUkrainianStreets(
     query: string,
     proximity?: Coordinates,
@@ -91,7 +86,6 @@ export async function suggestUkrainianStreets(
     }));
 }
 
-/** Center of a Ukrainian city, used to bias street suggestions towards it. */
 export async function findUkrainianCity(city: string, signal?: AbortSignal): Promise<Coordinates | null> {
     const [first] = await forwardGeocode({ query: city, types: 'place', limit: 1, signal });
 
