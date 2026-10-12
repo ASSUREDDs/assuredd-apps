@@ -41,11 +41,12 @@ const config: ExpoConfig = {
     plugins: [
         ['expo-router', { root: './src/app' }],
         'expo-secure-store',
+        '@rnmapbox/maps',
         [
             'expo-location',
             {
                 locationWhenInUsePermission:
-                    'Allow $(PRODUCT_NAME) to use your location to verify the address you enter during registration.',
+                    'Allow $(PRODUCT_NAME) to use your location to show where you are on the map and to verify the address you enter during registration.',
             },
         ],
     ],
@@ -53,6 +54,7 @@ const config: ExpoConfig = {
     owner: 'assuredds-team',
     extra: {
         apiUrl: current.apiUrl,
+        mapboxToken: process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? '',
         variant,
         eas: { projectId: '8e9dbfc1-2f22-4e21-9f36-027a94347fb6' },
     },

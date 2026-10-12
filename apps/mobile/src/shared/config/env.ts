@@ -1,6 +1,6 @@
-import Constants from 'expo-constants';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
-type Extra = { apiUrl: string; variant: string };
+type Extra = { apiUrl: string; mapboxToken?: string; variant: string };
 
 const extra = Constants.expoConfig?.extra as Extra | undefined;
 
@@ -17,5 +17,7 @@ function resolveDevHost(url: string): string {
 }
 
 export const API_URL = resolveDevHost(extra.apiUrl);
+export const MAPBOX_TOKEN = extra.mapboxToken ?? '';
 export const APP_VARIANT = extra.variant;
+export const IS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 export const IS_DEV = extra.variant === 'development';

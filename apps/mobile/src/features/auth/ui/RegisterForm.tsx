@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ApiError } from '@/shared/api/http';
-import { geocodeAddress } from '@/shared/lib/geocode';
+import type { AddressSuggestion } from '@/shared/lib/address-suggest';
+import { geocodeAddress, type Coordinates } from '@/shared/lib/geocode';
 import { Button } from '@/shared/ui/Button';
 import { FormError } from '@/shared/ui/FormError';
 import { TextField } from '@/shared/ui/TextField';
@@ -11,6 +12,7 @@ import { colors } from '@/shared/ui/theme/colors';
 
 import { getAuthErrorMessage } from '../lib/error-messages';
 import { useRegister } from '../model/use-register';
+import { StreetField } from './StreetField';
 
 const GENDER_OPTIONS = GenderSchema.options;
 const GEOCODE_ERROR_MESSAGE = 'Could not determine coordinates for this address. Please check it and try again.';
@@ -46,10 +48,20 @@ export function RegisterForm() {
     const [fieldErrors, setFieldErrors] = useState<Partial<Record<string, string>>>({});
     const [geocodeError, setGeocodeError] = useState<string>();
     const [isGeocoding, setIsGeocoding] = useState(false);
+    const [suggestedCoordinates, setSuggestedCoordinates] = useState<Coordinates>();
     const register = useRegister();
 
     function setField<K extends keyof FormValues>(key: K, value: FormValues[K]) {
         setValues((prev) => ({ ...prev, [key]: value }));
+    }
+
+    function handleStreetSelect(suggestion: AddressSuggestion) {
+        setValues((prev) => ({
+            ...prev,
+            street: suggestion.street,
+            city: suggestion.city || prev.city,
+        }));
+        setSuggestedCoordinates({ latitude: suggestion.latitude, longitude: suggestion.longitude });
     }
 
     async function handleSubmit() {
@@ -57,7 +69,10 @@ export function RegisterForm() {
         setGeocodeError(undefined);
         setIsGeocoding(true);
 
-        const coordinates = await geocodeAddress(`${values.street} ${values.houseNumber}, ${values.city}`);
+        // The picked suggestion is street-level; geocoding the full address is more precise,
+        // so it stays the primary source and the suggestion only covers its failures.
+        const coordinates =
+            (await geocodeAddress(`${values.street} ${values.houseNumber}, ${values.city}`)) ?? suggestedCoordinates;
 
         setIsGeocoding(false);
 
@@ -163,30 +178,26 @@ export function RegisterForm() {
             </View>
 
             <TextField
-                label="Street"
+                label="City"
+                value={values.city}
+                onChangeText={(v) => setField('city', v)}
+                error={fieldErrors['address.city']}
+            />
+
+            <StreetField
                 value={values.street}
+                city={values.city}
                 onChangeText={(v) => setField('street', v)}
+                onSelect={handleStreetSelect}
                 error={fieldErrors['address.street']}
             />
 
-            <View style={styles.row}>
-                <View style={styles.city}>
-                    <TextField
-                        label="City"
-                        value={values.city}
-                        onChangeText={(v) => setField('city', v)}
-                        error={fieldErrors['address.city']}
-                    />
-                </View>
-                <View style={styles.houseNumber}>
-                    <TextField
-                        label="House number"
-                        value={values.houseNumber}
-                        onChangeText={(v) => setField('houseNumber', v)}
-                        error={fieldErrors['address.houseNumber']}
-                    />
-                </View>
-            </View>
+            <TextField
+                label="House number"
+                value={values.houseNumber}
+                onChangeText={(v) => setField('houseNumber', v)}
+                error={fieldErrors['address.houseNumber']}
+            />
 
             <FormError message={geocodeError ?? submitError} />
             <Button
@@ -211,12 +222,6 @@ const styles = StyleSheet.create({
     },
     phoneNumber: {
         flex: 1,
-    },
-    city: {
-        flex: 1,
-    },
-    houseNumber: {
-        width: 110,
     },
     genderRow: {
         flexDirection: 'row',
