@@ -41,6 +41,7 @@ const config: ExpoConfig = {
     plugins: [
         ['expo-router', { root: './src/app' }],
         'expo-secure-store',
+        'expo-localization',
         '@rnmapbox/maps',
         [
             'expo-location',

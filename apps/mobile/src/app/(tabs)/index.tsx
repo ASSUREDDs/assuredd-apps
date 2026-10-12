@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 
 import { useSessionStore } from '@/entities/session/session.store';
-import { UkraineMap } from '@/features/map/ui/UkraineMap';
+import { AppMap } from '@/features/map/ui/AppMap';
 import type { LngLat } from '@/features/map/lib/ukraine';
 
 export default function MapScreen() {
@@ -12,7 +12,7 @@ export default function MapScreen() {
     return (
         <View style={styles.container}>
             <StatusBar style="dark" />
-            <UkraineMap center={center} />
+            <AppMap center={center} />
         </View>
     );
 }

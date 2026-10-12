@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text } from 'react-native';
 
 import { Screen } from '@/shared/ui/Screen';
 import { colors } from '@/shared/ui/theme/colors';
 
 export default function ReportsScreen() {
+    const { t } = useTranslation();
+
     return (
         <Screen>
-            <Text style={styles.title}>Reports</Text>
-            <Text style={styles.empty}>You have no reports yet.</Text>
+            <Text style={styles.title}>{t('reports.title')}</Text>
+            <Text style={styles.empty}>{t('reports.empty')}</Text>
         </Screen>
     );
 }

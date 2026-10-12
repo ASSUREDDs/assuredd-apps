@@ -1,13 +1,15 @@
 import { LoginRequestSchema } from '@app/contracts';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { ApiError } from '@/shared/api/http';
+import { translateValidationIssue } from '@/shared/lib/validation-messages';
 import { Button } from '@/shared/ui/Button';
 import { FormError } from '@/shared/ui/FormError';
 import { TextField } from '@/shared/ui/TextField';
 
-import { getAuthErrorMessage } from '../lib/error-messages';
+import { getAuthErrorKey } from '../lib/error-messages';
 import { useLogin } from '../model/use-login';
 
 interface FieldErrors {
@@ -20,6 +22,7 @@ export function LoginForm() {
     const [password, setPassword] = useState('');
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const login = useLogin();
+    const { t } = useTranslation();
 
     function handleSubmit() {
         const parsed = LoginRequestSchema.safeParse({ email, password });
@@ -27,7 +30,7 @@ export function LoginForm() {
             const errors: FieldErrors = {};
             for (const issue of parsed.error.issues) {
                 const field = issue.path[0];
-                if (field === 'email' || field === 'password') errors[field] = issue.message;
+                if (field === 'email' || field === 'password') errors[field] = translateValidationIssue(issue, t);
             }
             setFieldErrors(errors);
             return;
@@ -38,13 +41,13 @@ export function LoginForm() {
     }
 
     const submitError = login.isError
-        ? getAuthErrorMessage(login.error instanceof ApiError ? login.error.code : undefined)
+        ? t(getAuthErrorKey(login.error instanceof ApiError ? login.error.code : undefined))
         : undefined;
 
     return (
         <View style={{ gap: 16 }}>
             <TextField
-                label="Email"
+                label={t('auth.login.emailLabel')}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -52,14 +55,14 @@ export function LoginForm() {
                 error={fieldErrors.email}
             />
             <TextField
-                label="Password"
+                label={t('auth.login.passwordLabel')}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
                 error={fieldErrors.password}
             />
             <FormError message={submitError} />
-            <Button label="Log in" onPress={handleSubmit} loading={login.isPending} />
+            <Button label={t('auth.login.submit')} onPress={handleSubmit} loading={login.isPending} />
         </View>
     );
 }

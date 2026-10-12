@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { AddressSuggestion } from '@/shared/lib/address-suggest';
@@ -18,6 +19,7 @@ interface StreetFieldProps {
 
 export function StreetField({ value, city, error, onChangeText, onSelect }: StreetFieldProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const { t } = useTranslation();
     const cityCenter = useCityCenter(city);
     const suggestions = useAddressSuggestions(isOpen ? value : '', cityCenter.data ?? undefined);
 
@@ -37,7 +39,7 @@ export function StreetField({ value, city, error, onChangeText, onSelect }: Stre
     return (
         <View style={styles.container}>
             <TextField
-                label="Street"
+                label={t('auth.register.streetLabel')}
                 value={value}
                 onChangeText={handleChangeText}
                 error={error}
@@ -51,7 +53,7 @@ export function StreetField({ value, city, error, onChangeText, onSelect }: Stre
                 </View>
             ) : null}
 
-            {isOpen && !city.trim() ? <Text style={styles.hint}>Fill in the city for closer matches.</Text> : null}
+            {isOpen && !city.trim() ? <Text style={styles.hint}>{t('auth.register.streetHint')}</Text> : null}
 
             {items.length > 0 ? (
                 <View style={styles.dropdown}>

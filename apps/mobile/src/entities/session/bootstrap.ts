@@ -17,9 +17,6 @@ export async function bootstrapSession(): Promise<void> {
             return;
         }
     } catch {
-        // Reading SecureStore can fail on its own — Expo Go cannot decrypt items written
-        // by a development build, for instance. Whatever broke, fall through to the login
-        // screen instead of leaving the app on the splash spinner forever.
         await clearTokens().catch(() => undefined);
     }
 

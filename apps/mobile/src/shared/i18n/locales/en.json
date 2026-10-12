@@ -1,0 +1,73 @@
+{
+    "tabs": {
+        "map": "Map",
+        "orders": "My orders",
+        "reports": "Reports",
+        "profile": "My profile"
+    },
+    "auth": {
+        "login": {
+            "title": "Welcome back",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "submit": "Log in",
+            "noAccount": "Don't have an account?",
+            "signUp": "Sign up"
+        },
+        "register": {
+            "title": "Create account",
+            "firstNameLabel": "First name",
+            "lastNameLabel": "Last name",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "countryCodeLabel": "Code",
+            "phoneNumberLabel": "Phone number",
+            "cityLabel": "City",
+            "streetLabel": "Street",
+            "streetHint": "Fill in the city for closer matches.",
+            "houseNumberLabel": "House number",
+            "submit": "Create account",
+            "hasAccount": "Already have an account?",
+            "logIn": "Log in",
+            "geocodeError": "Could not determine coordinates for this address. Please check it and try again."
+        },
+        "genders": {
+            "male": "Male",
+            "female": "Female",
+            "other": "Other"
+        },
+        "errors": {
+            "invalidCredentials": "Invalid email or password",
+            "emailAlreadyInUse": "This email is already registered",
+            "sessionExpired": "Your session has expired, please log in again",
+            "generic": "Something went wrong, please try again"
+        }
+    },
+    "map": {
+        "unavailableTitle": "Map is unavailable",
+        "unavailableExpoGo": "Expo Go cannot load Mapbox. Open the app in a development build to see the map.",
+        "unavailableNoToken": "Set EXPO_PUBLIC_MAPBOX_TOKEN in apps/mobile/.env and rebuild to load the map."
+    },
+    "orders": {
+        "title": "My orders",
+        "empty": "You have no orders yet."
+    },
+    "reports": {
+        "title": "Reports",
+        "empty": "You have no reports yet."
+    },
+    "profile": {
+        "emailLabel": "Email",
+        "phoneLabel": "Phone",
+        "addressLabel": "Address",
+        "logOut": "Log out"
+    },
+    "validation": {
+        "required": "This field is required",
+        "invalid": "This field is invalid",
+        "invalidEmail": "Enter a valid email address",
+        "passwordMin": "Must be at least {{count}} characters",
+        "invalidCountryCode": "Enter a valid country code, e.g. +380",
+        "invalidPhoneNumber": "Invalid phone number for the selected country code"
+    }
+}

@@ -1,21 +1,22 @@
 import { GenderSchema, RegisterRequestSchema, type Gender } from '@app/contracts';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ApiError } from '@/shared/api/http';
 import type { AddressSuggestion } from '@/shared/lib/address-suggest';
 import { geocodeAddress, type Coordinates } from '@/shared/lib/geocode';
+import { translateValidationIssue } from '@/shared/lib/validation-messages';
 import { Button } from '@/shared/ui/Button';
 import { FormError } from '@/shared/ui/FormError';
 import { TextField } from '@/shared/ui/TextField';
 import { colors } from '@/shared/ui/theme/colors';
 
-import { getAuthErrorMessage } from '../lib/error-messages';
+import { getAuthErrorKey } from '../lib/error-messages';
 import { useRegister } from '../model/use-register';
 import { StreetField } from './StreetField';
 
 const GENDER_OPTIONS = GenderSchema.options;
-const GEOCODE_ERROR_MESSAGE = 'Could not determine coordinates for this address. Please check it and try again.';
 
 interface FormValues {
     email: string;
@@ -50,6 +51,7 @@ export function RegisterForm() {
     const [isGeocoding, setIsGeocoding] = useState(false);
     const [suggestedCoordinates, setSuggestedCoordinates] = useState<Coordinates>();
     const register = useRegister();
+    const { t } = useTranslation();
 
     function setField<K extends keyof FormValues>(key: K, value: FormValues[K]) {
         setValues((prev) => ({ ...prev, [key]: value }));
@@ -69,15 +71,13 @@ export function RegisterForm() {
         setGeocodeError(undefined);
         setIsGeocoding(true);
 
-        // The picked suggestion is street-level; geocoding the full address is more precise,
-        // so it stays the primary source and the suggestion only covers its failures.
         const coordinates =
             (await geocodeAddress(`${values.street} ${values.houseNumber}, ${values.city}`)) ?? suggestedCoordinates;
 
         setIsGeocoding(false);
 
         if (!coordinates) {
-            setGeocodeError(GEOCODE_ERROR_MESSAGE);
+            setGeocodeError(t('auth.register.geocodeError'));
             return;
         }
 
@@ -100,7 +100,7 @@ export function RegisterForm() {
         if (!parsed.success) {
             const errors: Partial<Record<string, string>> = {};
             for (const issue of parsed.error.issues) {
-                errors[issue.path.join('.')] = issue.message;
+                errors[issue.path.join('.')] = translateValidationIssue(issue, t);
             }
             setFieldErrors(errors);
             return;
@@ -110,25 +110,25 @@ export function RegisterForm() {
     }
 
     const submitError = register.isError
-        ? getAuthErrorMessage(register.error instanceof ApiError ? register.error.code : undefined)
+        ? t(getAuthErrorKey(register.error instanceof ApiError ? register.error.code : undefined))
         : undefined;
 
     return (
         <View style={styles.container}>
             <TextField
-                label="First name"
+                label={t('auth.register.firstNameLabel')}
                 value={values.firstName}
                 onChangeText={(v) => setField('firstName', v)}
                 error={fieldErrors.firstName}
             />
             <TextField
-                label="Last name"
+                label={t('auth.register.lastNameLabel')}
                 value={values.lastName}
                 onChangeText={(v) => setField('lastName', v)}
                 error={fieldErrors.lastName}
             />
             <TextField
-                label="Email"
+                label={t('auth.register.emailLabel')}
                 value={values.email}
                 onChangeText={(v) => setField('email', v)}
                 autoCapitalize="none"
@@ -136,7 +136,7 @@ export function RegisterForm() {
                 error={fieldErrors.email}
             />
             <TextField
-                label="Password"
+                label={t('auth.register.passwordLabel')}
                 value={values.password}
                 onChangeText={(v) => setField('password', v)}
                 secureTextEntry
@@ -146,7 +146,7 @@ export function RegisterForm() {
             <View style={styles.row}>
                 <View style={styles.countryCode}>
                     <TextField
-                        label="Code"
+                        label={t('auth.register.countryCodeLabel')}
                         value={values.countryCode}
                         onChangeText={(v) => setField('countryCode', v)}
                         error={fieldErrors['phone.countryCode']}
@@ -154,7 +154,7 @@ export function RegisterForm() {
                 </View>
                 <View style={styles.phoneNumber}>
                     <TextField
-                        label="Phone number"
+                        label={t('auth.register.phoneNumberLabel')}
                         value={values.phoneNumber}
                         onChangeText={(v) => setField('phoneNumber', v)}
                         keyboardType="phone-pad"
@@ -171,14 +171,14 @@ export function RegisterForm() {
                         style={[styles.genderChip, values.gender === option && styles.genderChipSelected]}
                     >
                         <Text style={[styles.genderLabel, values.gender === option && styles.genderLabelSelected]}>
-                            {option.charAt(0).toUpperCase() + option.slice(1)}
+                            {t(`auth.genders.${option}`)}
                         </Text>
                     </Pressable>
                 ))}
             </View>
 
             <TextField
-                label="City"
+                label={t('auth.register.cityLabel')}
                 value={values.city}
                 onChangeText={(v) => setField('city', v)}
                 error={fieldErrors['address.city']}
@@ -193,7 +193,7 @@ export function RegisterForm() {
             />
 
             <TextField
-                label="House number"
+                label={t('auth.register.houseNumberLabel')}
                 value={values.houseNumber}
                 onChangeText={(v) => setField('houseNumber', v)}
                 error={fieldErrors['address.houseNumber']}
@@ -201,7 +201,7 @@ export function RegisterForm() {
 
             <FormError message={geocodeError ?? submitError} />
             <Button
-                label="Create account"
+                label={t('auth.register.submit')}
                 onPress={() => void handleSubmit()}
                 loading={isGeocoding || register.isPending}
             />

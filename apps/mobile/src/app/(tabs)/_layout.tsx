@@ -9,6 +9,7 @@ import {
     IconUserFilled,
 } from '@tabler/icons-react-native';
 import { Redirect, Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import { useSessionStore } from '@/entities/session/session.store';
 import { colors } from '@/shared/ui/theme/colors';
@@ -17,6 +18,7 @@ const ICON_SIZE = 24;
 
 export default function TabsLayout() {
     const status = useSessionStore((state) => state.status);
+    const { t } = useTranslation();
 
     if (status === 'idle' || status === 'loading') {
         return null;
@@ -45,7 +47,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Map',
+                    title: t('tabs.map'),
                     tabBarIcon: ({ color, focused }) =>
                         focused ? (
                             <IconMapPinFilled color={color} size={ICON_SIZE} />
@@ -57,7 +59,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="orders"
                 options={{
-                    title: 'My orders',
+                    title: t('tabs.orders'),
                     tabBarIcon: ({ color, focused }) =>
                         focused ? (
                             <IconClipboardListFilled color={color} size={ICON_SIZE} />
@@ -69,7 +71,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="reports"
                 options={{
-                    title: 'Reports',
+                    title: t('tabs.reports'),
                     tabBarIcon: ({ color, focused }) =>
                         focused ? (
                             <IconFileAnalyticsFilled color={color} size={ICON_SIZE} />
@@ -81,7 +83,7 @@ export default function TabsLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'My profile',
+                    title: t('tabs.profile'),
                     tabBarIcon: ({ color, focused }) =>
                         focused ? (
                             <IconUserFilled color={color} size={ICON_SIZE} />
