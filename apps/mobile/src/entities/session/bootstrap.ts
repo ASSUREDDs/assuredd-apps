@@ -8,17 +8,17 @@ import { useSessionStore } from './session.store';
 export async function bootstrapSession(): Promise<void> {
     useSessionStore.setState({ status: 'loading' });
 
-    const tokens = await getTokens();
-    if (!tokens) {
-        useSessionStore.setState({ status: 'unauthenticated', user: null });
-        return;
+    try {
+        const tokens = await getTokens();
+
+        if (tokens) {
+            const user = await authorizedRequest('/auth/me', UserSchema);
+            useSessionStore.getState().setSession(user);
+            return;
+        }
+    } catch {
+        await clearTokens().catch(() => undefined);
     }
 
-    try {
-        const user = await authorizedRequest('/auth/me', UserSchema);
-        useSessionStore.getState().setSession(user);
-    } catch {
-        await clearTokens();
-        useSessionStore.setState({ status: 'unauthenticated', user: null });
-    }
+    useSessionStore.setState({ status: 'unauthenticated', user: null });
 }

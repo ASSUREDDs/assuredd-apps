@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { bootstrapSession } from '@/entities/session/bootstrap';
+import '@/shared/i18n';
 
 const queryClient = new QueryClient();
 

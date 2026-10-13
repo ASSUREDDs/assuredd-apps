@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useLogout } from '@/features/auth/model/use-logout';
@@ -9,6 +10,7 @@ import { colors } from '@/shared/ui/theme/colors';
 export default function ProfileScreen() {
     const user = useSessionStore((state) => state.user);
     const logout = useLogout();
+    const { t } = useTranslation();
 
     if (!user) return null;
 
@@ -18,22 +20,27 @@ export default function ProfileScreen() {
                 {user.firstName} {user.lastName}
             </Text>
             <View style={styles.section}>
-                <Text style={styles.label}>Email</Text>
+                <Text style={styles.label}>{t('profile.emailLabel')}</Text>
                 <Text style={styles.value}>{user.email}</Text>
             </View>
             <View style={styles.section}>
-                <Text style={styles.label}>Phone</Text>
+                <Text style={styles.label}>{t('profile.phoneLabel')}</Text>
                 <Text style={styles.value}>
                     {user.phone.countryCode} {user.phone.number}
                 </Text>
             </View>
             <View style={styles.section}>
-                <Text style={styles.label}>Address</Text>
+                <Text style={styles.label}>{t('profile.addressLabel')}</Text>
                 <Text style={styles.value}>
                     {user.address.street} {user.address.houseNumber}, {user.address.city}
                 </Text>
             </View>
-            <Button label="Log out" variant="secondary" onPress={() => logout.mutate()} loading={logout.isPending} />
+            <Button
+                label={t('profile.logOut')}
+                variant="secondary"
+                onPress={() => logout.mutate()}
+                loading={logout.isPending}
+            />
         </Screen>
     );
 }

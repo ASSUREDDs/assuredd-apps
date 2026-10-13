@@ -17,6 +17,19 @@ interface RequestOptions extends RequestInit {
     accessToken?: string;
 }
 
+const REQUEST_TIMEOUT_MS = 15_000;
+
+async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+        return await fetch(url, { signal: controller.signal, ...init });
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
 export async function request<T extends z.ZodType>(
     path: string,
     schema: T,
@@ -24,7 +37,7 @@ export async function request<T extends z.ZodType>(
 ): Promise<z.infer<T>> {
     const { accessToken, headers, ...rest } = init ?? {};
 
-    const res = await fetch(`${API_URL}${path}`, {
+    const res = await fetchWithTimeout(`${API_URL}${path}`, {
         ...rest,
         headers: {
             'Content-Type': 'application/json',

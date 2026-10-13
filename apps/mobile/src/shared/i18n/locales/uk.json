@@ -1,0 +1,73 @@
+{
+    "tabs": {
+        "map": "Карта",
+        "orders": "Мої замовлення",
+        "reports": "Звіти",
+        "profile": "Мій профіль"
+    },
+    "auth": {
+        "login": {
+            "title": "З поверненням",
+            "emailLabel": "Електронна пошта",
+            "passwordLabel": "Пароль",
+            "submit": "Увійти",
+            "noAccount": "Немає акаунту?",
+            "signUp": "Зареєструватися"
+        },
+        "register": {
+            "title": "Створити акаунт",
+            "firstNameLabel": "Ім'я",
+            "lastNameLabel": "Прізвище",
+            "emailLabel": "Електронна пошта",
+            "passwordLabel": "Пароль",
+            "countryCodeLabel": "Код",
+            "phoneNumberLabel": "Номер телефону",
+            "cityLabel": "Місто",
+            "streetLabel": "Вулиця",
+            "streetHint": "Вкажіть місто для точніших збігів.",
+            "houseNumberLabel": "Номер будинку",
+            "submit": "Зареєструватися",
+            "hasAccount": "Вже є акаунт?",
+            "logIn": "Увійти",
+            "geocodeError": "Не вдалося визначити координати цієї адреси. Перевірте її і спробуйте ще раз."
+        },
+        "genders": {
+            "male": "Чоловіча",
+            "female": "Жіноча",
+            "other": "Інша"
+        },
+        "errors": {
+            "invalidCredentials": "Неправильний email або пароль",
+            "emailAlreadyInUse": "Ця електронна пошта вже зареєстрована",
+            "sessionExpired": "Сесія закінчилася, увійдіть знову",
+            "generic": "Щось пішло не так, спробуйте ще раз"
+        }
+    },
+    "map": {
+        "unavailableTitle": "Карта недоступна",
+        "unavailableExpoGo": "Expo Go не може завантажити Mapbox. Відкрийте застосунок у development build, щоб побачити карту.",
+        "unavailableNoToken": "Вкажіть EXPO_PUBLIC_MAPBOX_TOKEN у apps/mobile/.env і перезберіть застосунок, щоб завантажити карту."
+    },
+    "orders": {
+        "title": "Мої замовлення",
+        "empty": "У вас ще немає замовлень."
+    },
+    "reports": {
+        "title": "Звіти",
+        "empty": "У вас ще немає звітів."
+    },
+    "profile": {
+        "emailLabel": "Електронна пошта",
+        "phoneLabel": "Телефон",
+        "addressLabel": "Адреса",
+        "logOut": "Вийти"
+    },
+    "validation": {
+        "required": "Це поле обов'язкове",
+        "invalid": "Некоректне значення",
+        "invalidEmail": "Введіть дійсну електронну пошту",
+        "passwordMin": "Мінімум {{count}} символів",
+        "invalidCountryCode": "Введіть дійсний код країни, напр. +380",
+        "invalidPhoneNumber": "Невірний номер телефону для вказаного коду країни"
+    }
+}

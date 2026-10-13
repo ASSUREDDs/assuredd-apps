@@ -1,4 +1,5 @@
 import { Link } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { LoginForm } from '@/features/auth/ui/LoginForm';
@@ -6,16 +7,18 @@ import { Screen } from '@/shared/ui/Screen';
 import { colors } from '@/shared/ui/theme/colors';
 
 export default function LoginScreen() {
+    const { t } = useTranslation();
+
     return (
         <Screen>
             <View style={styles.container}>
                 <View style={styles.top}>
-                    <Text style={styles.title}>Welcome back</Text>
+                    <Text style={styles.title}>{t('auth.login.title')}</Text>
                     <LoginForm />
                     <View style={styles.footer}>
-                        <Text style={styles.footerText}>Don&apos;t have an account?</Text>
+                        <Text style={styles.footerText}>{t('auth.login.noAccount')}</Text>
                         <Link href="/(auth)/register">
-                            <Text style={styles.link}>Sign up</Text>
+                            <Text style={styles.link}>{t('auth.login.signUp')}</Text>
                         </Link>
                     </View>
                 </View>

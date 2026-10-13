@@ -1,23 +1,24 @@
-import { StyleSheet, Text } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, View } from 'react-native';
 
 import { useSessionStore } from '@/entities/session/session.store';
-import { Screen } from '@/shared/ui/Screen';
-import { colors } from '@/shared/ui/theme/colors';
+import { AppMap } from '@/features/map/ui/AppMap';
+import type { LngLat } from '@/features/map/lib/ukraine';
 
-export default function HomeScreen() {
-    const user = useSessionStore((state) => state.user);
+export default function MapScreen() {
+    const address = useSessionStore((state) => state.user?.address);
+    const center: LngLat | undefined = address ? [address.longitude, address.latitude] : undefined;
 
     return (
-        <Screen>
-            <Text style={styles.greeting}>Hi, {user?.firstName ?? 'there'}</Text>
-        </Screen>
+        <View style={styles.container}>
+            <StatusBar style="dark" />
+            <AppMap center={center} />
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    greeting: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: colors.textPrimary,
+    container: {
+        flex: 1,
     },
 });
