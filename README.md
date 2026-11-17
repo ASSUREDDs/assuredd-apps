@@ -1,10 +1,149 @@
 # Assuredd Monorepo
 
+<a id="mvp-demo"></a>
+
+## MVP demo: start mobile, backend and Valhalla
+
+Run all commands below **from the `assuredd-apps` repository root**. Backend, PostGIS and Valhalla run in Docker; the mobile app uses Metro in a separate terminal. You need Docker Desktop running, Node 22, pnpm and the [native toolchain](#prerequisites) for iOS or Android. Internet access is required for maps, address search and the initial OSM download.
+
+### Prepare before the demo
+
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+pnpm --filter @app/contracts build
+```
+
+Set a valid public Mapbox token in `apps/mobile/.env` (preserve any existing settings):
+
+```dotenv
+EXPO_PUBLIC_MAPBOX_TOKEN=pk.YOUR_TOKEN
+```
+
+This setup does not need `apps/api/.env`: backend settings are already defined in `docker-compose.yml`. Keep `pnpm dev` stopped while using this setup: the Docker API uses port `3550`.
+
+**If Valhalla previously used the Kyiv extract**, remove its old graph once before starting. A regular restart will keep that graph instead of switching to Lviv. For the default Compose project name, run:
+
+```bash
+docker compose --profile routing rm -sf valhalla
+docker volume rm assuredd-apps_valhalla
+```
+
+Skip this step if the volume does not exist. **Do not use `docker compose down -v`: it also deletes the database and demo data.** Check that `VALHALLA_TILE_URLS` in your environment or root `.env` does not override the Lviv URL from Compose.
+
+### Terminal 1: start backend, database and Valhalla
+
+Use this block for both initial setup and startup before the demo. Run commands one at a time; resolve any error before continuing.
+
+```bash
+# Wait for a healthy database. On first startup, Valhalla downloads OSM and builds the graph.
+docker compose up -d --wait db
+docker compose --profile routing up -d valhalla
+
+# Build the current backend, apply migrations and start the API.
+docker compose build api
+docker compose run --rm --no-deps api node dist/migrate
+docker compose up -d api
+
+# Check containers and the API connection to the database.
+docker compose --profile routing ps
+curl --fail --show-error http://localhost:3550/health
+```
+
+Expect `"status":"ok"` from `/health`. If the API is still starting, repeat `curl` after a few seconds. On failure, inspect `docker compose logs --tail=100 api db`.
+
+The first graph build for Lviv oblast can take time, so complete it before the demo. The container may already show `Up` while building, and API `/health` only checks the database. Follow the build progress:
+
+```bash
+docker compose --profile routing logs -f --tail=100 valhalla
+```
+
+Press `Ctrl+C` to stop following logs; the container keeps running. Verify readiness with **a real walking route in central Lviv**:
+
+```bash
+curl --fail --show-error http://localhost:8002/route \
+  -H 'Content-Type: application/json' \
+  --data '{"locations":[{"lat":49.8419,"lon":24.0315},{"lat":49.8397,"lon":24.0297}],"costing":"pedestrian"}'
+```
+
+Expect JSON containing `trip`, `summary` and `legs`. On failure, check the logs and wait for the build to finish; if the old Kyiv graph remains, perform the one-time reset above. Choose demo routes in Lviv: the current extract covers Lviv oblast.
+
+### Terminal 2: start the mobile app
+
+If the current **Assuredd Dev** build is already installed on your phone or simulator:
+
+```bash
+APP_VARIANT=development pnpm --filter @app/mobile start --dev-client --lan
+```
+
+Keep this terminal open. Press `i` for the iOS simulator, `a` for Android, or open the QR code on a phone with Assuredd Dev installed. Maps and background tracking require a native development build; Expo Go cannot run the full demo.
+
+If the app is not installed, or the installed build predates `expo-task-manager`, **rebuild it before the demo**. Stop Metro with `Ctrl+C`, then run:
+
+```bash
+pnpm --filter @app/mobile prebuild:dev
+APP_VARIANT=development pnpm --filter @app/mobile ios
+# For Android, use this instead of the previous command:
+# APP_VARIANT=development pnpm --filter @app/mobile android
+# For a physical iPhone instead of a simulator:
+# APP_VARIANT=development pnpm --filter @app/mobile ios --device
+```
+
+`prebuild:dev` recreates the generated `ios/` and `android/` directories. The `ios` / `android` command builds and installs the app, then starts Metro; there is no need to run `start` separately in this case.
+
+Keep the phone and computer on the same Wi-Fi network. In development, the app replaces `localhost` in the API URL with the Metro computer's address; the backend uses port `3550`. Before the demo, open `http://<computer-IP>:3550/health` on the phone and check for `"status":"ok"`. If it fails, check the network and firewall access to ports `3550` and `8081`; a Metro tunnel alone does not expose the local API.
+
+Before presenting, sign in to a demo account or register a user with a Lviv address, then check the map and route building. For background tracking, allow location access at all times; when using a simulator, set its location to Lviv.
+
+### Stop after the demo
+
+Press `Ctrl+C` in the Metro terminal, then run from the repository root:
+
+```bash
+docker compose --profile routing stop api valhalla db
+```
+
+The database and built graph are preserved for the next startup.
+
+---
+
 A pnpm monorepo holding a NestJS backend and a React Native (Expo) mobile app that share the same TypeScript contracts.
 
 The whole point of this setup is the shared contracts package. API request and response shapes are defined once as zod schemas. The backend validates incoming requests with them, the mobile app parses responses with them, and CI type checks both apps together. If someone changes a field name, the build breaks immediately instead of failing silently in production.
 
+## About the project
+
+**ASSURED** is an enterprise micro-navigation platform for the last meters of urban logistics: arches, closed courtyards, entrances without codes. Standard maps (Google Maps, Waze) are not built for pedestrian delivery inside closed city blocks, so couriers lose time wandering through blind spots, miss delivery slots (SLAs) and take long to onboard.
+
+ASSURED gives couriers precise courtyard navigation (instructions, entrances, intercom codes). Passive tracking of their on-foot routes (`LineString`) feeds a per-client knowledge graph, so the product keeps learning courtyards without anyone mapping them by hand.
+
+- **Target market:** large e-commerce companies, retailers and marketplaces with their own delivery fleets (100+ couriers) in big cities. Decision makers are COOs, heads of logistics and heads of IT.
+- **Business model:** enterprise B2B. Annual enterprise licences or per-fleet-size contracts, with a custom SLA and integration into the client's existing TMS.
+- **Value:** guaranteed SLA compliance, 15-20% less fleet working time, and courier experience turned into a closed corporate knowledge base. One client's data is never mixed with another's.
+- **Go-to-market:** direct enterprise sales, paid or free pilots (PoC) on a limited area or part of the fleet to prove a 5x ROI, and partnerships with TMS vendors to embed the navigation module.
+
+### How the product fits together
+
+Full details are in [logic.pdf](logic.pdf) (how each part works and why), the architecture diagram is [schema.png](schema.png).
+
+| Part | What it does |
+| --- | --- |
+| Assuredd app | React Native (Expo) courier app for iOS and Android, a thin UI over the SDK. This is `apps/mobile`. |
+| Client SDK | `sdk-core` (TypeScript: server calls, offline queue, route check) and `sdk-react-native` (map and ready-made screens), so clients embed navigation in their own courier app. Native iOS and Android versions come later. |
+| Public API | NestJS, REST `/v1`, OpenAPI. Single entry point: obstacles, nearby search, routes, intercom codes. The key or token identifies the client (tenant), never the request. This is `apps/api`. |
+| Database | PostgreSQL with PostGIS. Every record has a `tenant_id`, with row-level security. Intercom codes are encrypted and each access is logged. OSM buildings, entrances and addresses are shared tables. |
+| Routing service | Separate container around a C++ algorithm. Holds client graphs in memory and returns a route for a client, start, target and a list of active obstacles. Knows nothing about orders or couriers. |
+| Routing algorithm | C++ core. Finds the best walking path through a courtyard, treating active obstacles as closed or expensive segments. Behind a `RouteProvider` interface, with TomTom as a fallback. |
+| Client graph | Binary file per client and region in S3: nodes (street points, arches, entrances, doors) and edges (type, length, confidence from how many couriers walked it). |
+| Graph build | Daily job per client: clean GPS errors, snap tracks to OSM streets and buildings, create a passage where many couriers walked the same way, write a new graph file. |
+| Courier tracks | Passive tracking in the SDK, sent in batches when online. Raw tracks are deleted after a retention period. |
+| OSM data | Weekly job: Geofabrik Ukraine dump, `osmium` extract, validation, base and tiles to S3 (versioned, `latest.json`), buildings and entrances into the DB. |
+| Map | Vector tiles in PMTiles, one file per region on a CDN, optionally downloaded to the phone for offline use. |
+
+Note: the target design in the documents uses MapLibre and PMTiles. The current mobile app still renders the map with Mapbox (`@rnmapbox/maps`).
+
 ---
+
 
 ## Table of contents
 
@@ -12,15 +151,16 @@ The whole point of this setup is the shared contracts package. API request and r
 2. [Prerequisites](#prerequisites)
 3. [Repository layout](#repository-layout)
 4. [Quick start](#quick-start)
-5. [Package manager notes](#package-manager-notes)
-6. [Shared contracts](#shared-contracts)
-7. [Backend](#backend)
-8. [Mobile](#mobile)
-9. [Docker](#docker)
-10. [CI](#ci)
-11. [Deployment](#deployment)
-12. [Conventions](#conventions)
-13. [Troubleshooting](#troubleshooting)
+5. [MVP demo: start mobile, backend and Valhalla](#mvp-demo)
+6. [Package manager notes](#package-manager-notes)
+7. [Shared contracts](#shared-contracts)
+8. [Backend](#backend)
+9. [Mobile](#mobile)
+10. [Docker](#docker)
+11. [CI](#ci)
+12. [Deployment](#deployment)
+13. [Conventions](#conventions)
+14. [Troubleshooting](#troubleshooting)
 
 ---
 

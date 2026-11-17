@@ -1,6 +1,8 @@
 export interface AccessTokenPayload {
     sub: string;
     email: string;
+    tenantId: string;
+    role: string;
 }
 
 export interface IssuedRefreshToken {

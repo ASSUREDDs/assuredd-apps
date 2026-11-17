@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { bootstrapSession } from '@/entities/session/bootstrap';
+// Registers the background tracking task. Must load with the app, even when it starts in the background.
+import '@/features/tracking/lib/background-task';
 import '@/shared/i18n';
 
 const queryClient = new QueryClient();

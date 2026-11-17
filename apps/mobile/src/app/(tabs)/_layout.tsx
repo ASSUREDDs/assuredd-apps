@@ -11,13 +11,18 @@ import {
 import { Redirect, Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { useOfflineSync } from '@/entities/obstacle/model/use-offline-sync';
 import { useSessionStore } from '@/entities/session/session.store';
+import { useTrackingSync } from '@/features/tracking/model/use-tracking';
 import { colors } from '@/shared/ui/theme/colors';
 
 const ICON_SIZE = 24;
 
 export default function TabsLayout() {
     const status = useSessionStore((state) => state.status);
+    const userId = useSessionStore((state) => state.user?.id ?? null);
+    useOfflineSync(status === 'authenticated' ? userId : null);
+    useTrackingSync(status === 'authenticated');
     const { t } = useTranslation();
 
     if (status === 'idle' || status === 'loading') {

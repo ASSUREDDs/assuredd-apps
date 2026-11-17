@@ -8,6 +8,27 @@
       "when": 1790110974707,
       "tag": "0000_colossal_millenium_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794267170568,
+      "tag": "0001_stage0_tenants_idempotency",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794338811580,
+      "tag": "0002_stage1_obstacles_entrances",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794344262122,
+      "tag": "0003_stage5_visits_tracks",
+      "breakpoints": true
     }
   ]
 }

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { EmailAlreadyInUseError } from '@domain/auth/domain-error';
 import { normalizeEmail } from '@domain/auth/email.vo';
-import type { User } from '@domain/auth/user.entity';
+import { DEFAULT_TENANT_ID, type User, UserRole } from '@domain/auth/user.entity';
 import { USER_REPOSITORY, type UserRepository } from '@domain/auth/user.repository';
 import { err, ok, type Result } from '@domain/shared/result';
 import { CLOCK, type Clock } from '@application/shared/ports/clock.port';
@@ -12,7 +12,7 @@ import type { AuthSession } from './auth-session';
 import { PASSWORD_HASHER, type PasswordHasher } from './ports/password-hasher.port';
 import { SessionIssuer } from './session-issuer';
 
-export type RegisterInput = Omit<User, 'id' | 'passwordHash' | 'createdAt'> & { password: string };
+export type RegisterInput = Omit<User, 'id' | 'tenantId' | 'role' | 'passwordHash' | 'createdAt'> & { password: string };
 
 @Injectable()
 export class RegisterUseCase {
@@ -31,6 +31,8 @@ export class RegisterUseCase {
 
         const user: User = {
             id: this.ids.generate(),
+            tenantId: DEFAULT_TENANT_ID,
+            role: UserRole.Courier,
             email,
             passwordHash: await this.passwordHasher.hash(input.password),
             firstName: input.firstName,

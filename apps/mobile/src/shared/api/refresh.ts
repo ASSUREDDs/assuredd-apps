@@ -1,7 +1,12 @@
 import { RefreshResponseSchema } from '@app/contracts';
 
-import { request } from './http';
+import { ApiError, request } from './http';
 import { clearTokens, getTokens, setTokens } from './token-storage';
+
+/** The server looked at the refresh token and refused it: the session is really over. */
+function isRejectedByServer(error: unknown): boolean {
+    return error instanceof ApiError && (error.status === 400 || error.status === 401 || error.status === 403);
+}
 
 export async function refreshTokens(): Promise<string> {
     const tokens = await getTokens();
@@ -18,7 +23,8 @@ export async function refreshTokens(): Promise<string> {
         await setTokens(response);
         return response.accessToken;
     } catch (error) {
-        await clearTokens();
+        // Being offline must not log the courier out: only a refusal from the server ends the session.
+        if (isRejectedByServer(error)) await clearTokens();
         throw error;
     }
 }

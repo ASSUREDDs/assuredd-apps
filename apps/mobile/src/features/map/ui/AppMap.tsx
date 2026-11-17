@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import type { Bounds } from '@/shared/lib/geo';
 import { colors } from '@/shared/ui/theme/colors';
 
 import { mapUnavailableReason, type MapUnavailableReason } from '../lib/mapbox';
@@ -13,9 +15,15 @@ const MESSAGE_KEYS: Record<MapUnavailableReason, string> = {
 
 interface AppMapProps {
     center?: LngLat;
+    children?: ReactNode;
+    onPress?: (point: LngLat) => void;
+    onLongPress?: (point: LngLat) => void;
+    onBoundsChange?: (bounds: Bounds) => void;
+    fitTo?: LngLat[] | null;
+    fitPadding?: { top: number; bottom: number };
 }
 
-export function AppMap({ center }: AppMapProps) {
+export function AppMap({ center, children, ...mapProps }: AppMapProps) {
     const { t } = useTranslation();
 
     if (mapUnavailableReason) {
@@ -30,7 +38,11 @@ export function AppMap({ center }: AppMapProps) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { MapboxMap } = require('./MapboxMap') as typeof import('./MapboxMap');
 
-    return <MapboxMap center={center ?? UKRAINE_CENTER} zoom={center ? CITY_ZOOM : UKRAINE_ZOOM} />;
+    return (
+        <MapboxMap center={center ?? UKRAINE_CENTER} zoom={center ? CITY_ZOOM : UKRAINE_ZOOM} marker={center} {...mapProps}>
+            {children}
+        </MapboxMap>
+    );
 }
 
 const styles = StyleSheet.create({

@@ -11,6 +11,6 @@ export const UKRAINE_ZOOM = 4.8;
 export const UKRAINE_MIN_ZOOM = 4.5;
 export const UKRAINE_MAX_ZOOM = 18;
 
-export const CITY_ZOOM = 11;
+export const CITY_ZOOM = 17;
 
 export const ZOOM_STEP = 1;

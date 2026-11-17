@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17-alpine
+    image: imresamu/postgis:17-3.5-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -24,6 +24,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/app
+      VALHALLA_URL: http://valhalla:8002
       ACCESS_TOKEN_SECRET: e5482cabc11524e32e29a8436a18f4bc7da48399b778a58eb9f1e4236959b6b3
       REFRESH_TOKEN_SECRET: 36824f3f7f4c9d548be522f4f0f057b413d04cbbe801929055207dde1ddbe8ed
     ports:
@@ -32,5 +33,26 @@ services:
       db:
         condition: service_healthy
 
+  # Pedestrian router for the MVP, used by the API through the RouteProvider interface.
+  # Opt-in because the first start downloads an OSM extract and builds tiles:
+  #   docker compose --profile routing up -d valhalla
+  # Defaults to the Lviv oblast extract. Override VALHALLA_TILE_URLS for another area.
+  valhalla:
+    profiles: ["routing"]
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    restart: unless-stopped
+    environment:
+      tile_urls: ${VALHALLA_TILE_URLS:-https://download.openstreetmap.fr/extracts/europe/ukraine/lviv_oblast-latest.osm.pbf}
+      use_tiles_ignore_pbf: "True"
+      build_elevation: "False"
+      build_admins: "True"
+      build_time_zones: "False"
+      server_threads: 2
+    ports:
+      - "8002:8002"
+    volumes:
+      - valhalla:/custom_files
+
 volumes:
   pgdata:
+  valhalla:

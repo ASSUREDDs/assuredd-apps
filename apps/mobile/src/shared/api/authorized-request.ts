@@ -18,7 +18,7 @@ function refreshOnce(): Promise<string> {
 export async function authorizedRequest<T extends z.ZodType>(
     path: string,
     schema: T,
-    init?: RequestInit,
+    init?: RequestInit & { timeoutMs?: number },
 ): Promise<z.infer<T>> {
     const tokens = await getTokens();
 

@@ -48,6 +48,13 @@ const config: ExpoConfig = {
             {
                 locationWhenInUsePermission:
                     'Allow $(PRODUCT_NAME) to use your location to show where you are on the map and to verify the address you enter during registration.',
+                locationAlwaysAndWhenInUsePermission:
+                    'Allow $(PRODUCT_NAME) to record your walking route near the delivery address while a delivery is in progress, even when the app is in the background. It is used to measure delivery time and to map courtyards for your company.',
+                // Background delivery tracking: adds the "location" background mode on iOS and the
+                // background-location permission and a foreground service on Android.
+                isIosBackgroundLocationEnabled: true,
+                isAndroidBackgroundLocationEnabled: true,
+                isAndroidForegroundServiceEnabled: true,
             },
         ],
     ],

@@ -6,6 +6,11 @@ const EnvSchema = z.object({
     DATABASE_URL: z.url(),
     ACCESS_TOKEN_SECRET: z.string().min(32),
     REFRESH_TOKEN_SECRET: z.string().min(32),
+    VALHALLA_URL: z.url().optional(),
+    GEOCODER_URL: z.url().default('https://photon.komoot.io'),
+    TRACK_RETENTION_DAYS: z.coerce.number().int().positive().default(30),
+    INCIDENT_TTL_SEC: z.coerce.number().int().positive().default(86400),
+    OBSTACLE_DISMISS_THRESHOLD: z.coerce.number().int().min(1).default(3),
     ACCESS_TTL_SEC: z.coerce.number().int().positive().default(900),
     REFRESH_TTL_SEC: z.coerce.number().int().positive().default(2592000),
 });

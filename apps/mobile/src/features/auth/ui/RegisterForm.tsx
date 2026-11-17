@@ -5,7 +5,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ApiError } from '@/shared/api/http';
 import type { AddressSuggestion } from '@/shared/lib/address-suggest';
-import { geocodeAddress, type Coordinates } from '@/shared/lib/geocode';
+import type { City } from '@/shared/lib/city-search';
+import type { Coordinates } from '@/shared/lib/geocode';
 import { translateValidationIssue } from '@/shared/lib/validation-messages';
 import { Button } from '@/shared/ui/Button';
 import { FormError } from '@/shared/ui/FormError';
@@ -13,7 +14,9 @@ import { TextField } from '@/shared/ui/TextField';
 import { colors } from '@/shared/ui/theme/colors';
 
 import { getAuthErrorKey } from '../lib/error-messages';
+import { resolveAddressPoint } from '../model/resolve-address-point';
 import { useRegister } from '../model/use-register';
+import { CityField } from './CityField';
 import { StreetField } from './StreetField';
 
 const GENDER_OPTIONS = GenderSchema.options;
@@ -57,6 +60,12 @@ export function RegisterForm() {
         setValues((prev) => ({ ...prev, [key]: value }));
     }
 
+    function handleCitySelect(city: City) {
+        // A street picked for another city no longer applies.
+        setValues((prev) => (prev.city === city.name ? prev : { ...prev, city: city.name, street: '' }));
+        setSuggestedCoordinates(undefined);
+    }
+
     function handleStreetSelect(suggestion: AddressSuggestion) {
         setValues((prev) => ({
             ...prev,
@@ -71,8 +80,12 @@ export function RegisterForm() {
         setGeocodeError(undefined);
         setIsGeocoding(true);
 
-        const coordinates =
-            (await geocodeAddress(`${values.street} ${values.houseNumber}, ${values.city}`)) ?? suggestedCoordinates;
+        const coordinates = await resolveAddressPoint({
+            street: values.street,
+            houseNumber: values.houseNumber,
+            city: values.city,
+            pickedStreetPoint: suggestedCoordinates,
+        });
 
         setIsGeocoding(false);
 
@@ -177,12 +190,7 @@ export function RegisterForm() {
                 ))}
             </View>
 
-            <TextField
-                label={t('auth.register.cityLabel')}
-                value={values.city}
-                onChangeText={(v) => setField('city', v)}
-                error={fieldErrors['address.city']}
-            />
+            <CityField value={values.city} onSelect={handleCitySelect} error={fieldErrors['address.city']} />
 
             <StreetField
                 value={values.street}
