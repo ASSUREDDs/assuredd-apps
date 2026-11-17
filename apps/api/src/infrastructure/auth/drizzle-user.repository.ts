@@ -23,6 +23,8 @@ export class DrizzleUserRepository implements UserRepository {
     async save(user: User): Promise<void> {
         await this.db.insert(users).values({
             id: user.id,
+            tenantId: user.tenantId,
+            role: user.role,
             email: user.email,
             passwordHash: user.passwordHash,
             firstName: user.firstName,
@@ -42,6 +44,8 @@ export class DrizzleUserRepository implements UserRepository {
     private toDomain(row: typeof users.$inferSelect): User {
         return {
             id: row.id,
+            tenantId: row.tenantId,
+            role: row.role as User['role'],
             email: row.email,
             passwordHash: row.passwordHash,
             firstName: row.firstName,

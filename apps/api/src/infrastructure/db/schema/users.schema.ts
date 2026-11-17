@@ -1,7 +1,13 @@
 import { doublePrecision, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
+import { tenants } from './tenants.schema';
+
 export const users = pgTable('users', {
     id: uuid('id').primaryKey().defaultRandom(),
+    tenantId: uuid('tenant_id')
+        .notNull()
+        .references(() => tenants.id),
+    role: text('role').notNull().default('courier'),
     email: text('email').notNull().unique(),
     passwordHash: text('password_hash').notNull(),
     firstName: text('first_name').notNull(),

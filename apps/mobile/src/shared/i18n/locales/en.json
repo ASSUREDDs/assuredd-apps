@@ -29,7 +29,11 @@
             "submit": "Create account",
             "hasAccount": "Already have an account?",
             "logIn": "Log in",
-            "geocodeError": "Could not determine coordinates for this address. Please check it and try again."
+            "geocodeError": "Could not determine coordinates for this address. Please check it and try again.",
+            "cityPlaceholder": "Select your city",
+            "cityPickerTitle": "City",
+            "citySearchPlaceholder": "Search for a city",
+            "cityNothingFound": "No city found"
         },
         "genders": {
             "male": "Male",
@@ -69,5 +73,100 @@
         "passwordMin": "Must be at least {{count}} characters",
         "invalidCountryCode": "Enter a valid country code, e.g. +380",
         "invalidPhoneNumber": "Invalid phone number for the selected country code"
+    },
+    "time": {
+        "justNow": "just now",
+        "minutesAgo": "{{count}} min ago",
+        "hoursAgo": "{{count}} h ago",
+        "daysAgo": "{{count}} d ago"
+    },
+    "obstacle": {
+        "kind": {
+            "closed_arch": "Closed arch",
+            "incident": "Incident"
+        },
+        "add": "Add obstacle",
+        "chooseKind": "What is blocking the way?",
+        "tapMap": "Tap the place on the map",
+        "pointSet": "Place set. Tap again to move it.",
+        "radius": "{{meters}} m",
+        "addComment": "Add a comment",
+        "commentPlaceholder": "What happened?",
+        "send": "Send",
+        "createFailed": "Could not add the obstacle. Try again.",
+        "added": "Added {{age}}",
+        "expiresAuto": "expires on its own",
+        "votes": "Still relevant: {{yes}} · No longer relevant: {{no}}",
+        "stillRelevant": "Still relevant",
+        "noLongerRelevant": "No longer relevant",
+        "remove": "Remove my obstacle",
+        "actionFailed": "That did not work. Try again.",
+        "zoomIn": "Zoom in to see obstacles",
+        "adding": "Adding the obstacle…",
+        "pendingHint": "Saved on your phone. It will be sent as soon as there is a connection.",
+        "cancelPending": "Cancel"
+    },
+    "route": {
+        "searchPlaceholder": "Delivery address",
+        "droppedPin": "Point on the map",
+        "longPressHint": "Or press and hold a house on the map",
+        "building": "Building the route…",
+        "toEntrance": "To the known entrance",
+        "toAddress": "To the address",
+        "avoiding": "Going around {{count}} obstacle(s)",
+        "warningAtDestination": "{{kind}} at the destination",
+        "distanceM": "{{count}} m",
+        "distanceKm": "{{value}} km",
+        "durationMin": "{{count}} min",
+        "errors": {
+            "notFound": "No walking route to this place.",
+            "blocked": "The only ways there are blocked by obstacles.",
+            "tooLong": "That address is too far away.",
+            "unavailable": "Routing is unavailable right now. Try again later.",
+            "generic": "Could not build the route."
+        },
+        "changed": {
+            "obstacleAdded": "Route changed: {{kind}}",
+            "obstacleRemoved": "Route changed: an obstacle was removed",
+            "destination": "Route changed: the destination moved to the entrance"
+        },
+        "updating": "Updating the route…"
+    },
+    "sync": {
+        "waiting": "{{count}} change(s) waiting for a connection",
+        "sending": "Sending your changes…",
+        "rejected": "{{count}} change(s) could not be saved"
+    },
+    "tracking": {
+        "start": "Start delivery",
+        "inProgress": "Delivery in progress",
+        "waitingForZone": "Recording starts within {{meters}} m of the address",
+        "recording": "Near the address: your route is being recorded",
+        "unsent": "{{count}} point(s) waiting to be sent",
+        "atDoor": "I'm at the door",
+        "cancelDelivery": "Cancel delivery",
+        "cancel": "Not now",
+        "delivered": "Delivered",
+        "ended": "Delivery ended",
+        "lastMeters": "Last {{meters}} m: {{minutes}} min {{seconds}} s",
+        "done": "Done",
+        "consentTitle": "Record your route near the address?",
+        "consentBody": "While a delivery is in progress, the app records where you walk within {{meters}} m of the delivery address, even when the screen is off. It is used to measure delivery time and to map courtyards for your company. Nothing is recorded far from the address or when no delivery is in progress.",
+        "consentAgree": "I agree",
+        "cancelTitle": "Cancel this delivery?",
+        "cancelBody": "Recording stops. What was already recorded is kept.",
+        "cancelYes": "Cancel delivery",
+        "cancelNo": "Keep going",
+        "startFailedTitle": "Could not start",
+        "foregroundOnlyTitle": "Tracking only while the app is open",
+        "foregroundOnlyBody": "To keep recording with the screen off, allow location access \"Always\" in Settings.",
+        "openSettings": "Open Settings",
+        "ok": "OK",
+        "errors": {
+            "already_active": "A delivery is already in progress.",
+            "location_denied": "Allow access to your location to record the delivery.",
+            "unsupported": "This version of the app cannot track in the background. Install the latest version.",
+            "failed": "Something went wrong. Try again."
+        }
     }
 }

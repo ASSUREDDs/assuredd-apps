@@ -16,7 +16,12 @@ export class SessionIssuer {
     ) {}
 
     async issue(user: User): Promise<AuthSession> {
-        const accessToken = this.tokens.signAccessToken({ sub: user.id, email: user.email });
+        const accessToken = this.tokens.signAccessToken({
+            sub: user.id,
+            email: user.email,
+            tenantId: user.tenantId,
+            role: user.role,
+        });
         const issued = this.tokens.issueRefreshToken();
 
         await this.refreshTokensRepository.save({

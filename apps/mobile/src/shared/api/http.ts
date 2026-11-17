@@ -1,27 +1,22 @@
 import { z } from 'zod';
 import { API_URL } from '../config/env';
+import { ApiError } from './errors';
 
-export class ApiError extends Error {
-    constructor(
-        public readonly status: number,
-        message: string,
-        public readonly code?: string,
-    ) {
-        super(message);
-    }
-}
+export { ApiError, isNetworkError, isTransientError } from './errors';
 
 export const NoContentSchema = z.null();
 
 interface RequestOptions extends RequestInit {
     accessToken?: string;
+    /** Overrides the default 15 s. Writes that can be queued for later use a shorter one. */
+    timeoutMs?: number;
 }
 
 const REQUEST_TIMEOUT_MS = 15_000;
 
-async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: number): Promise<Response> {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
         return await fetch(url, { signal: controller.signal, ...init });
@@ -35,7 +30,7 @@ export async function request<T extends z.ZodType>(
     schema: T,
     init?: RequestOptions,
 ): Promise<z.infer<T>> {
-    const { accessToken, headers, ...rest } = init ?? {};
+    const { accessToken, headers, timeoutMs = REQUEST_TIMEOUT_MS, ...rest } = init ?? {};
 
     const res = await fetchWithTimeout(`${API_URL}${path}`, {
         ...rest,
@@ -44,7 +39,7 @@ export async function request<T extends z.ZodType>(
             ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             ...headers,
         },
-    });
+    }, timeoutMs);
 
     const body = await res.json().catch(() => null);
 

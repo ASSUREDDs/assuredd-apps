@@ -41,6 +41,6 @@ import { JwtAuthGuard } from './jwt-auth.guard';
         { provide: CLOCK, useClass: SystemClock },
         { provide: ID_GENERATOR, useClass: CryptoIdGenerator },
     ],
-    exports: [JwtAuthGuard],
+    exports: [JwtAuthGuard, TOKEN_SERVICE],
 })
 export class AuthModule {}

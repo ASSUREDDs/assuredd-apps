@@ -18,7 +18,10 @@ export class JwtAuthGuard implements CanActivate {
         if (!header?.startsWith('Bearer ')) throw new UnauthorizedException();
 
         try {
-            request.user = this.tokens.verifyAccessToken(header.slice('Bearer '.length));
+            const payload = this.tokens.verifyAccessToken(header.slice('Bearer '.length));
+            // Tokens issued before tenants existed lack these claims; force a refresh.
+            if (!payload.tenantId || !payload.role) throw new UnauthorizedException();
+            request.user = payload;
             return true;
         } catch {
             throw new UnauthorizedException();
